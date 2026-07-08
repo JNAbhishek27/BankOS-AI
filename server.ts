@@ -81,10 +81,11 @@ async function queryAgent(agentId: AgentId, systemPrompt: string, userPrompt: st
     } catch (error: any) {
       const errorMessage = error?.message || String(error);
       const isQuotaError = errorMessage.includes("429") || errorMessage.includes("quota") || errorMessage.includes("RESOURCE_EXHAUSTED");
+      const isUnavailableError = errorMessage.includes("503") || errorMessage.includes("UNAVAILABLE") || errorMessage.includes("high demand") || errorMessage.includes("temporary");
       
-      if (isQuotaError) {
+      if (isQuotaError || isUnavailableError) {
         apiCooldownUntil = Date.now() + 45000; // 45 seconds cooldown
-        console.warn(`BankOS AI [Quota Warning]: Quota exceeded (429) for agent ${agentId}. Commencing 45s simulation-only cooldown.`);
+        console.warn(`BankOS AI [API Cooldown]: Temporary service limits, 503 unavailable, or high demand spikes encountered for agent ${agentId}. Transitioning to simulation-only mode for 45s.`);
       } else {
         console.error(`Gemini call failed for agent ${agentId}:`, error);
       }
