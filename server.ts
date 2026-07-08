@@ -14,18 +14,22 @@ let ai: GoogleGenAI | null = null;
 const apiKey = process.env.GEMINI_API_KEY;
 
 if (apiKey && apiKey !== "MY_GEMINI_API_KEY" && apiKey.trim() !== "") {
-  try {
-    ai = new GoogleGenAI({
-      apiKey: apiKey,
-      httpOptions: {
-        headers: {
-          "User-Agent": "aistudio-build",
+  if (!apiKey.trim().startsWith("AIzaSy")) {
+    console.warn("BankOS AI Warning: The configured GEMINI_API_KEY does not start with 'AIzaSy'. This is likely an invalid key format (e.g. a Vercel deploy token instead of a Gemini API key). Falling back to high-fidelity Simulation Engine to prevent network request hangs.");
+  } else {
+    try {
+      ai = new GoogleGenAI({
+        apiKey: apiKey,
+        httpOptions: {
+          headers: {
+            "User-Agent": "aistudio-build",
+          },
         },
-      },
-    });
-    console.log("BankOS AI: Gemini API client initialized successfully.");
-  } catch (error) {
-    console.error("BankOS AI: Failed to initialize Gemini Client:", error);
+      });
+      console.log("BankOS AI: Gemini API client initialized successfully.");
+    } catch (error) {
+      console.error("BankOS AI: Failed to initialize Gemini Client:", error);
+    }
   }
 } else {
   console.log("BankOS AI: No active GEMINI_API_KEY found. Running in high-fidelity simulation mode.");
@@ -81,10 +85,14 @@ async function queryAgent(agentId: AgentId, systemPrompt: string, userPrompt: st
       const errorMessage = error?.message || String(error);
       const isQuotaError = errorMessage.includes("429") || errorMessage.includes("quota") || errorMessage.includes("RESOURCE_EXHAUSTED");
       const isUnavailableError = errorMessage.includes("503") || errorMessage.includes("UNAVAILABLE") || errorMessage.includes("high demand") || errorMessage.includes("temporary");
+      const isInvalidKey = errorMessage.includes("API_KEY_INVALID") || errorMessage.includes("invalid api key") || errorMessage.includes("key not valid") || errorMessage.includes("invalid key") || errorMessage.includes("API key not valid") || errorMessage.includes("400") || errorMessage.includes("403");
       
       if (isQuotaError || isUnavailableError) {
         apiCooldownUntil = Date.now() + 45000; // 45 seconds cooldown
         console.warn(`BankOS AI [API Cooldown]: Temporary service limits, 503 unavailable, or high demand spikes encountered for agent ${agentId}. Transitioning to simulation-only mode for 45s.`);
+      } else if (isInvalidKey) {
+        console.error(`BankOS AI [Invalid Key Warning]: The configured GEMINI_API_KEY was rejected by Google APIs (${errorMessage}). Disabling direct AI requests and falling back to local Simulation Engine.`);
+        ai = null; // Disable future calls to prevent network hangs
       } else {
         console.error(`Gemini call failed for agent ${agentId}:`, error);
       }
