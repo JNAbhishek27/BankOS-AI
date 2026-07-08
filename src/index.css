@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-display: "Space Grotesk", sans-serif;
+
+  --color-brand-primary: #0F172A; /* IDBI deep professional blue */
+  --color-brand-secondary: #2563EB; /* Professional Polish deep blue-600 */
+  --color-brand-accent: #10B981; /* Compliance / Approval emerald green */
+  --color-brand-warning: #F59E0B; /* Fraud flag / pending amber */
+  --color-brand-danger: #EF4444; /* Audit rejection red */
+
+  /* Map existing sky scale references to professional blue to match the theme */
+  --color-sky-50: #f0f5ff;
+  --color-sky-100: #e0ebff;
+  --color-sky-200: #c2d6ff;
+  --color-sky-300: #9cbaff;
+  --color-sky-400: #6b93ff;
+  --color-sky-500: #3d68ff;
+  --color-sky-600: #2563eb;
+  --color-sky-700: #1a49c4;
+  --color-sky-800: #163b9e;
+  --color-sky-900: #122c73;
+  --color-sky-950: #0a173d;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.5);
+}
+
+/* Animated radar effects for visual agent monitoring */
+@keyframes radar-pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.radar-signal {
+  position: relative;
+}
+
+.radar-signal::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  border: 2px solid var(--color-brand-secondary);
+  animation: radar-pulse 2s infinite ease-out;
+}
+
+/* Glowing card headers for multi-agent processes */
+.agent-active-glow {
+  box-shadow: 0 0 15px -3px rgba(2, 132, 199, 0.25);
+  border-color: rgba(2, 132, 199, 0.4);
+}
+
+/* Glassmorphism custom components */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+}

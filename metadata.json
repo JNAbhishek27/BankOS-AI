@@ -1,0 +1,6 @@
+{
+  "name": "BankOS AI",
+  "description": "The Autonomous Multi-Agent Operating System for Banking. Orchestrating Loan Officer, Compliance, Fraud, Risk, and Document AIs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
